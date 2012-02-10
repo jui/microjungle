@@ -14,9 +14,30 @@ var microjungle = function(template) {
                     who.innerHTML += j;
                 } else {
                     if (typeof j[0] == 'string') {
-                        var el = d.createElement(j.shift()),
-                            attrs = {}.toString.call(j[0]) === '[object Object]' && j.shift(),
-                            k;
+			var classes = null; var ids = null; var tag = null;
+			var en = j.shift();
+			var c = en.charAt(0);
+			if ((c === '.' || c === '#' || c === '%')) {
+			    classes = en.match(/\.[^\.#]+/g);
+			    ids = en.match(/#[^\.#]+/g);
+			    tag = en.match(/^%([^\.#]+)/g);
+			    tag = tag ? tag[0].substr(1) : 'div';
+			} else {
+			    tag = en;
+			}
+
+                        var el = d.createElement(tag),			    
+                        attrs = {}.toString.call(j[0]) === '[object Object]' && j.shift(), k;
+			
+			if (classes) {
+			    for (k in classes) classes[k] = classes[k].substr(1);
+			    el.setAttribute('class',classes.join(' '));
+			}
+
+			if (ids) {
+			    for (k in ids) ids[k] = ids[k].substr(1);
+			    el.setAttribute('id',ids.join(' '));
+			}
 
                         if (attrs) {
                             for(k in attrs) {
